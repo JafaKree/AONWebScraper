@@ -1,4 +1,6 @@
 ﻿using HtmlAgilityPack;
+using AONWebScraper.DataObjects;
+using AONWebScraper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -21,22 +23,18 @@ namespace Tests
 
             if (htmlContent != null)
             {
-                HtmlDocument document = scraper.LoadHtmlDocument(htmlContent);
-                Assert.IsNotNull(document);
                 string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                document.Save($"{userProfilePath}\\Desktop\\example.html");
+                File.WriteAllText($"{userProfilePath}\\Documents\\example.html", htmlContent);
             }
             else
             {
                 Console.WriteLine("Failed to get page content.");
             }
         }
-    }
-}
-
-namespace AONWebScraperTests
-{
-    internal class WebScraperTests
-    {
+        [TestMethod()]
+        public async Task GetPathfinderFeats()
+        {
+            
+        }
     }
 }

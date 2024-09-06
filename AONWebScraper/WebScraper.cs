@@ -1,6 +1,5 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using HtmlAgilityPack;
 
 public class WebScraper
@@ -16,9 +15,15 @@ public class WebScraper
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument("--headless");
+            IWebDriver driver = new ChromeDriver(options);
+            driver.Navigate().GoToUrl(url);
+            // Wait for the page to load completely
+            Task.Delay(80 * 1000).Wait(); // Adjust the delay as needed
+            string pageSource = driver.PageSource;
+            driver.Quit();
+            return pageSource;
         }
         catch (HttpRequestException e)
         {

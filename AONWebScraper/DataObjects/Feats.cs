@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AONWebScraper.DataObjects
 {
-    internal class FeatsTable
+    public class FeatsTable
     {
         required public List<FeatRow> Feats { get; set; }
         public class FeatRow
@@ -21,4 +21,5 @@ namespace AONWebScraper.DataObjects
             required public string Summary { get; set; }
             public string? Spoilers { get; set; }
         }
+    }
 }
