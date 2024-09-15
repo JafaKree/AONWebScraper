@@ -1,40 +1,40 @@
 ﻿using HtmlAgilityPack;
 using AONWebScraper.DataObjects;
 using AONWebScraper;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Nest;
 
 namespace Tests
 {
     [TestClass()]
     public class WebScraperTests
     {
-
+        const string index = "aon";
+        const string root = "https://elasticsearch.aonprd.com/";
+        const string DirectoryName = "ArchiveOfNethysData";
         [TestMethod()]
-        public async Task GetPageContentAsyncTestAsync()
+        public async Task GetFeats()
         {
-            WebScraper scraper = new WebScraper();
-            string url = "https://2e.aonprd.com/";
-            string htmlContent = await scraper.GetPageContentAsync(url);
-
-            if (htmlContent != null)
+            WebScraper webScraper = new WebScraper(root);
+            List<ISearchResponse<object>> searchResponses = await webScraper.RetrieveTargets(new List<string>() { "feat" }, "category", index);
+            Assert.IsTrue(searchResponses.Count > 0);
+            foreach (ISearchResponse<object> responses in searchResponses)
             {
-                string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                File.WriteAllText($"{userProfilePath}\\Documents\\example.html", htmlContent);
-            }
-            else
-            {
-                Console.WriteLine("Failed to get page content.");
+                webScraper.WriteData("feat", "category", responses);
             }
         }
         [TestMethod()]
-        public async Task GetPathfinderFeats()
+        public async Task StoreFeats()
         {
-            
+            string filePath = $"{AppDomain.CurrentDomain.BaseDirectory}{DirectoryName}\\feat.json";
+            string featData = File.ReadAllText(filePath);
+            if(!File.Exists(filePath))
+            {
+                throw new FileNotFoundException($"File not found: {filePath}");
+            }
+            WebScraper webScraper = new WebScraper(root);
+            List<FeatEntry> feats = webScraper.DeserializeData<FeatEntry>(featData);
         }
     }
 }
